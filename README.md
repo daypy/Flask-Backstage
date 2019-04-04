@@ -2,7 +2,7 @@
 
 ### 简介
 
-前端使用layui+layer框架，后端使用flask准备后台集成管理。
+前端使用layui+layer框架，后端使用flask框架开发的后台。
 
 
 
