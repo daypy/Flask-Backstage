@@ -64,3 +64,15 @@
 
 > 账号：admin@ops.com 密码：admin
 
+
+
+### 界面
+
+登陆
+
+![登陆界面](https://github.com/daypy/Flask-Backstage/blob/master/images/login.png)
+
+后台
+
+![后台界面](https://github.com/daypy/Flask-Backstage/blob/master/images/login.png)
+
