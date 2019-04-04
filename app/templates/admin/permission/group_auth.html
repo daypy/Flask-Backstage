@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <script src="{{ url_for('static', filename='ztree/js/jquery.ztree.all-3.5.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='ztree/css/metroStyle.css') }}">
+    <fieldset class="layui-elem-field">
+        <legend>权限设置 - 访问授权</legend>
+        <div class="layui-field-box">
+            <form class="layui-form" action="">
+                {{ form.csrf_token }}
+                 <div class="layui-form-item">
+                    <div id="menuContent" class="menuContent">
+                        <ul id="treeDemo" class="ztree" style="margin-top:0; width:100%; height:auto;"></ul>
+                    </div>
+                 </div>
+                {{ form.tree_val() }}
+                <!--<input type="hidden" name="tree_val" id="tree_val" value=''>-->
+                <div class="layui-form-item">
+                    <button class="layui-btn" lay-submit lay-filter="admin-form">修改</button>
+                </div>
+            </form>
+        </div>
+    </fieldset>
+{% endblock %}
+
+{% block myScript %}
+    <script type="text/javascript">
+        var setting = {
+              view: {
+                selectedMulti: false,
+              },
+              check: {
+                enable: true
+              },
+              data: {
+                simpleData: {
+                  enable: true
+                }
+              },
+              callback: {
+                onCheck:onCheck
+              },
+              edit: {
+                enable: false
+              }
+        };
+
+        //var zNodes = '';
+
+        function filter(node) {
+                return node;
+        }
+
+        function onCheck(e,treeId,treeNode){
+            var treeObj=$.fn.zTree.getZTreeObj("treeDemo"),
+            nodes=treeObj.getCheckedNodes(true),
+            v="";
+            for(var i=0;i<nodes.length;i++){
+                v+=nodes[i].id + "|";
+              }
+            document.getElementById("tree_val").value=v;
+        };
+        //update
+        function UpdateNodeCheck(){
+            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+            var nodes = zTree.getCheckedNodes(true);
+            //alert(nodes);
+            for (var i = 0; i < nodes.length; i++){
+                var node = nodes[i];
+                zTree.updateNode(node);
+            }
+        }
+
+        $(document).ready(function(){
+            var url = '{{ url_for("admin.rule_json",id=gid) }}';
+            $.getJSON(url,function(result){
+                // 访问zTree方法通过数据初始化节点信息
+                $.fn.zTree.init($("#treeDemo"),setting,result);
+             });
+        });
+
+        //layuijs
+        layui.use('form', function(){
+            var form = layui.form();
+            //var menu_id = $("#tree_val").val();
+            form.on('submit(admin-form)', function(data){
+                    $.ajax({
+                        type: "POST",
+                        url: '{{ url_for("admin.rule",id=gid) }}',
+                        data: data.field,
+                        success: function(msg){
+                            if( msg.code == 1 ){
+                                parent.layer.msg(msg.msg, {
+                                icon: 1,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            }, function () {
+                                parent.location.reload();
+                            });
+                            }else{
+                                parent.layer.msg(msg.msg, {
+                                    icon: 5,
+                                    shade: [0.6, '#393D49'],
+                                    time:1500
+                                });
+                            }
+                        }
+                    });
+                    return false;
+                });
+
+        });
+
+    </script>
+
+{% endblock %}

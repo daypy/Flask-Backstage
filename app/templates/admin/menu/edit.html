@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+
+{% block main %}
+    <fieldset class="layui-elem-field">
+        <legend>菜单管理 - 编辑菜单</legend>
+        <div class="layui-field-box">
+            <form class="layui-form" action="">
+                {{ form.csrf_token }}
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 菜单名称</label>
+                    <div class="layui-input-block">
+                        {{ form.name(class='layui-input',placeholder='请输入菜单名称') }}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 父级菜单</label>
+                    <div class="layui-input-block">
+                        {{ form.fid()}}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 是否隐藏</label>
+                    <div class="layui-input-block">
+                        {{ form.hide()}}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">菜单URL</label>
+                    <div class="layui-input-block">
+                        {{ form.url(class='layui-input',placeholder='请输入菜单URL') }}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">菜单排序</label>
+                    <div class="layui-input-block">
+                        {{ form.sort(class='layui-input',placeholder='请输入正整数，越大排名越靠后') }}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="admin-form">立即提交</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </fieldset>
+{% endblock %}
+
+{% block myScript %}
+    <script>
+        layui.use('form', function(){
+            var form = layui.form();
+
+            //添加菜单验证
+            form.verify({
+                name: function (value) {
+                    if (value == ""){
+                        return "请输入菜单名称";
+                    }
+                },
+                sort: function (value) {
+                    if (value == ""){
+                        return "请输入排序";
+                    }
+                }
+            });
+
+            form.on('submit(admin-form)', function(data){
+                    $.ajax({
+                        type: "POST",
+                        url: '{{ url_for("admin.menu_edit",id=menu.id) }}',
+                        data: data.field,
+                        success: function(msg){
+                            if( msg.code == 1 ){
+                                parent.layer.msg(msg.msg, {
+                                icon: 1,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            }, function () {
+                                parent.location.reload();
+                            });
+                            }else{
+                                parent.layer.msg(msg.msg, {
+                                    icon: 5,
+                                    shade: [0.6, '#393D49'],
+                                    time:1500
+                                });
+                            }
+                        }
+                    });
+                    return false;
+                });
+
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>运维后台登录</title>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/font-awesome.min93e3.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/login.min.css') }}" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+    <script>
+        if(window.top!==window.self){window.top.location=window.location};
+    </script>
+    <style>
+        .login_l_img{
+            float:left;
+            width:400px;
+            height:350px;
+            margin-left: -20px;
+        }
+        .login_l_img img{
+            width:400px;
+            height:345px;
+        }
+    </style>
+
+</head>
+
+<body class="signin">
+    <div class="signinpanel">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="login_l_img"><img src="{{ url_for('static', filename='img/login-img.png') }}" /></div>
+            </div>
+            <div class="col-sm-6">
+                <form role="form" method="post" action="{{ url_for('auth.login') }}">
+                    {{ form.csrf_token }}
+                    <div style="margin-bottom: 40px"></div>
+                    <!--<h4 class="no-margins">登录：</h4>
+                    <p class="m-t-md">登录到SHOW运维综合管理后台</p>-->
+                    <div class="form-group"></div>
+                    {% for category, message in get_flashed_messages(with_categories=true) %}
+                        <div class="alert alert-{{ category }} alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <strong>{{ message }}</strong>
+                        </div>
+                    {% endfor %}
+                    <div class="form-group">
+                        {{ form.email(class='form-control uname', placeholder='请输入您的电子邮件', required='') }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password(class='form-control pword m-b', placeholder='请输入您的密码', required='') }}
+                    </div>
+                    <div class="form-group">
+                            <div id="embed-captcha"></div>
+                            <p id="wait" class="show">正在加载验证码......</p>
+                            <p id="notice" class="hide">请先完成验证</p>
+                    </div>
+                    <div style="margin-bottom: 20px"></div>
+                    <button class="btn btn-success btn-block">登录</button>
+                    <div style="margin-bottom: 20px"></div>
+                </form>
+            </div>
+        </div>
+        <div class="signup-footer">
+            <div class="text-center">
+                &copy; 2018 SHOW运维综合管理后台
+            </div>
+        </div>
+    </div>
+<script src="{{ url_for('static', filename='jquery/3.1.1/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/gt.js') }}"></script>
+<script type="text/javascript">
+    var handlerEmbed = function (captchaObj) {
+        $("#embed-submit").click(function (e) {
+            var validate = captchaObj.getValidate();
+            if (!validate) {
+                $("#notice")[0].className = "show";
+                setTimeout(function () {
+                    $("#notice")[0].className = "hide";
+                }, 2000);
+                e.preventDefault();
+            }
+        });
+        captchaObj.appendTo("#embed-captcha");
+        captchaObj.onReady(function () {
+            $("#wait")[0].className = "hide";
+        });
+    };
+    $.ajax({
+        url: "Verification/gt?t=" + (new Date()).getTime(),
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            initGeetest({
+                width: '100%',
+                gt: data.gt,
+                challenge: data.challenge,
+                new_captcha: data.new_captcha,
+                product: "float",
+                offline: !data.success
+            }, handlerEmbed);
+        }
+    });
+</script>
+</body>
+</html>

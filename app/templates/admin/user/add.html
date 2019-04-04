@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <fieldset class="layui-elem-field">
+        <legend>用户管理 - 新增用户</legend>
+        <div class="layui-field-box">
+            <form class="layui-form" action="">
+                {{ form.csrf_token }}
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 账号名</label>
+                    <div class="layui-input-block">
+                        {{ form.email(class='layui-input', value='',placeholder='请输入账号名') }}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 真实姓名</label>
+                    <div class="layui-input-block">
+                        {{ form.username(class='layui-input', value='',placeholder='请输入真实姓名') }}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 所属组</label>
+                    <div class="layui-input-block">
+                        {{ form.gid()}}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="admin-form">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </fieldset>
+{% endblock %}
+
+{% block myScript %}
+    <script>
+        layui.use('form', function(){
+            var form = layui.form();
+            form.on('submit(admin-form)', function(data){
+                $.ajax({
+                    type: "POST",
+                    url: '{{ url_for("admin.useradd") }}',
+                    data: data.field,
+                    success: function(msg){
+                        if( msg.code == 1 ){
+                            parent.layer.msg(msg.msg, {
+                                icon: 1,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            }, function () {
+                                parent.location.reload();
+                            });
+                        }else{
+                            parent.layer.msg(msg.msg, {
+                                icon: 5,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            });
+                        }
+                    }
+                });
+                return false;
+            });
+
+        });
+    </script>
+{% endblock %}

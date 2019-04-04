@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.dataTables.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dataTable.css') }}">
+    <fieldset class="layui-elem-field">
+        <legend>用户管理 - 用户列表</legend>
+        {{ form.csrf_token(id='csrfuser') }}
+        <div class="layui-field-box">
+            <form class="layui-form" id="form-admin-add" action="">
+                <div class="layui-form-item">
+                <div class="layui-inline">
+                    <select name="type">
+                        <option value="">请选择查询方式</option>
+                        <option value="1">用户账号</option>
+                        <option value="2">用户昵称</option>
+                    </select>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-inline" style="width: 300px;">
+                        <input type="text" name="keyword" placeholder="请输入关键词" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <span class="layui-btn sub">查询</span>
+                </div>
+                <div class="layui-inline" style="float: right;margin-right:-2px;">
+                    <span class="layui-btn layui-btn-normal api-add"><i class="layui-icon">&#xe608;</i> 新增</span>
+                </div>
+            </div>
+            </form>
+            <table class="layui-table" id="list-admin" lay-even>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>用户账号</th>
+                    <th>用户昵称</th>
+                    <th>所属组</th>
+                    <th>注册时间</th>
+                    <th>最后登录IP</th>
+                    <th>最后登录时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <!--<tbody>
+                {% for n in listinfo %}
+                    <tr>
+                        <td>{{ listinfo[n]['id'] }}</td>
+                        <td>{{ listinfo[n]['email'] }}</td>
+                        <td>{{ listinfo[n]['username'] }}</td>
+                        <td>{{ listinfo[n]['gname'] }}</td>
+                        <td>{{ listinfo[n]['regTime'] }}</td>
+                        <td>{{ listinfo[n]['regIp'] }}</td>
+                        <td>{{ listinfo[n]['updateTime'] }}</td>
+                        <td>
+                            <span data-url="{{ url_for('admin.useredit',id=listinfo[n]['id']) }}"
+                                  class="layui-btn edit layui-btn-normal layui-btn-small">编辑</span>
+                            <span class="layui-btn layui-btn-warm layui-btn-small reset" data-id="{{ listinfo[n]['id'] }}">重置</span>
+                            <span class="layui-btn layui-btn-danger layui-btn-small confirm" data-id="{{ listinfo[n]['id'] }}">删除</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>-->
+            </table>
+        </div>
+    </fieldset>
+
+{% endblock %}
+
+{% block myScript %}
+    <script>
+        //编辑账号
+        function edit(nodeId) {
+            var url = "{{ url_for('admin.useredit',id=nodeId)}}";
+            layer.open({
+                type: 2,
+                area: ['50%', '50%'],
+                maxmin: true,
+                content: url+nodeId
+            });
+        };
+        //重置密码
+        function reset(nodeId) {
+            layer.confirm('你确定要重置密码?', {
+                btn: ['确定','取消'] //按钮
+            }, function () {
+                post_data=$('#csrfuser').serialize()+'&uid='+nodeId;
+                $.ajax({
+                    type: "POST",
+                    url: '{{ url_for("admin.userreset") }}',
+                    data: post_data,
+                    success: function(msg){
+                        if( msg.code == 1 ){
+                            layer.msg(msg.msg, {
+                                icon: 1,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            }, function () {
+                                location.reload();
+                            });
+                        }else{
+                            layer.msg(msg.msg, {
+                                icon: 5,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            });
+                        }
+                    }
+                });
+            });
+        };
+        //删除账号
+        function del(nodeId) {
+            layer.confirm('你确定删除当前用户么？', {
+                btn: ['确定', '取消'] //按钮
+            }, function(){
+                post_data=$('#csrfuser').serialize()+'&uid='+nodeId;
+                $.ajax({
+                    type: "POST",
+                    url: '{{ url_for("admin.userdel") }}',
+                    data: post_data,
+                    success: function(msg){
+                        if( msg.code == 1 ){
+                            layer.msg(msg.msg, {
+                                icon: 1,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            }, function () {
+                                location.reload();
+                            });
+                        }else{
+                            layer.msg(msg.msg, {
+                                icon: 5,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            });
+                        }
+                    }
+                });
+            });
+        };
+        //添加账号
+        layui.use(['layer', 'form'], function() {
+            $('.api-add').on('click', function () {
+                layer.open({
+                    type: 2,
+                    area: ['50%', '50%'],
+                    maxmin: true,
+                    content: '{{ url_for("admin.useradd")  }}'
+                });
+            });
+        });
+
+        //分页
+         var myFun = function (query) {
+                query = query || '';
+                return $('#list-admin').DataTable({
+                    dom: 'rt<"bottom"ifpl><"clear">',
+                    ordering: false,
+                    autoWidth: false,
+                    searching:false,
+                    serverSide: true,
+                    ajax: {
+                        url:'{{ url_for("admin.userpage") }}'+query,
+                        type: 'POST',
+                        data:{"csrf_token":document.getElementById('csrfuser').value},
+                        dataSrc: function ( json ) {
+                            if( json.code == 0 ){
+                                parent.layer.msg(json.msg, {
+                                    icon: 5,
+                                    shade: [0.6, '#393D49'],
+                                    time:1500
+                                });
+                            }else{
+                                return json.data;
+                            }
+                        }
+                    },
+                    columnDefs:[
+                        // {
+                        //     "targets":5,
+                        //     "render": function(data){
+                        //         return new Date(data*1000).Format("yyyy-MM-dd hh:mm:ss");
+                        //     }
+                        // },
+                        {
+                            "targets":7,
+                            "render":function(data, type, row){
+                                var returnStr = '';
+                                returnStr += '<span class="layui-btn edit layui-btn-normal layui-btn-small" ' +
+                                    'onclick="edit('+row.id+')">编辑</span>';
+                                returnStr += '<span class="layui-btn layui-btn-warm layui-btn-small reset" ' +
+                                    'onclick="reset('+row.id+')">重置</span>';
+                                returnStr += '<span class="layui-btn layui-btn-danger layui-btn-small confirm" ' +
+                                    'onclick="del('+row.id+')">删除</span>';
+                                return returnStr;
+                            }
+                        }
+                    ],
+                    iDisplayLength : 10,
+                    aLengthMenu : [10, 20, 30],
+                    columns: [
+                        {"data": "id"},
+                        {"data": "email"},
+                        {"data": "username" },
+                        {"data": "gname" },
+                        {"data": "regTime" },
+                        {"data": "regIp" },
+                        {"data": "updateTime" },
+                        {"data": null }
+                    ]
+                });
+            };
+         var myTable = myFun();
+         $('.sub').on("click", function(){
+            myTable.destroy();
+            myTable = myFun('?'+ $('#form-admin-add').serialize());
+        });
+
+    </script>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <fieldset class="layui-elem-field">
+        <legend>权限管理 - 权限组成员列表</legend>
+        <div class="layui-field-box">
+            <table class="layui-table" lay-even>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>用户账号</th>
+                    <th>用户昵称</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{ form.csrf_token(id='csrfuser') }}
+                {% for n in data %}
+                    <tr>
+                        <td>{{ n['id'] }}</td>
+                        <td>{{ n['email'] }}</td>
+                        <td>{{ n['username'] }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+{% endblock %}

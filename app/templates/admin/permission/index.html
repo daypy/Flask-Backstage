@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.dataTables.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dataTable.css') }}">
+    <fieldset class="layui-elem-field">
+        {{ form.csrf_token(id='csrfuser') }}
+        <legend>权限管理 - 权限组列表</legend>
+        <div class="layui-field-box">
+            <span class="layui-btn layui-btn-normal api-add"><i class="layui-icon">&#xe608;</i> 新增</span>
+            <table class="layui-table" id="list-admin" lay-even>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>权限组</th>
+                    <th>描述</th>
+                    <th>访问授权</th>
+                    <th>成员授权</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </fieldset>
+{% endblock %}
+
+{% block myScript %}
+    <script>
+        //访问授权
+        function rule(nodeId) {
+            var url = "{{ url_for('admin.rule',id=nodeId)}}";
+            layer.open({
+                type: 2,
+                area: ['30%', '70%'],
+                maxmin: true,
+                content: url+nodeId
+            });
+        };
+        //成员授权
+        function member(nodeId) {
+            var url = "{{ url_for('admin.member',id=nodeId)}}";
+            layer.open({
+                type: 2,
+                area: ['50%', '50%'],
+                maxmin: true,
+                content: url+nodeId
+            });
+        };
+        //组编辑
+        function edit(nodeId) {
+            var url = "{{ url_for('admin.permission_edit',id=nodeId)}}";
+            layer.open({
+                type: 2,
+                area: ['50%', '50%'],
+                maxmin: true,
+                content: url+nodeId
+            });
+        }
+        //组删除
+        function del(nodeId) {
+            layer.confirm('你确定删除当前组么？', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                post_data=$('#csrfuser').serialize()+'&gid='+nodeId;
+                $.ajax({
+                    type: "POST",
+                    url: '{{ url_for("admin.permission_del") }}',
+                    data: post_data,
+                    success: function(msg){
+                        if( msg.code == 1 ){
+                            layer.msg(msg.msg, {
+                                icon: 1,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            }, function () {
+                                location.reload();
+                            });
+                        }else{
+                            layer.msg(msg.msg, {
+                                icon: 5,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            });
+                        }
+                    }
+                });
+            });
+        };
+
+        layui.use(['layer'], function() {
+            $('.api-add').on('click', function () {
+                layer.open({
+                    type: 2,
+                    area: ['50%', '50%'],
+                    maxmin: true,
+                    content: '{{ url_for("admin.permission_add")  }}'
+                });
+            });
+        });
+        //分页
+         var myFun = function (query) {
+            query = query || '';
+            return $('#list-admin').DataTable({
+                dom: 'rt<"bottom"ifpl><"clear">',
+                ordering: false,
+                autoWidth: false,
+                searching:false,
+                serverSide: true,
+                ajax: {
+                    url:'{{ url_for("admin.permission_page") }}'+query,
+                    type: 'POST',
+                    data:{"csrf_token":document.getElementById('csrfuser').value},
+                    dataSrc: function ( json ) {
+                        if( json.code == 0 ){
+                            parent.layer.msg(json.msg, {
+                                icon: 5,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            });
+                        }else{
+                            return json.data;
+                        }
+                    }
+                },
+                columnDefs:[
+                    {
+                        "targets": 3,
+                        "render": function (data, type, row) {
+                            var returnStr = '';
+                            returnStr += '<span class="layui-btn layui-btn-small edit" ' +
+                                'onclick="rule(' + row.id + ')">访问授权</span>';
+                            return returnStr;
+                        }
+                    },
+                    {
+                        "targets": 4,
+                        "render": function (data, type, row) {
+                            var returnStr = '';
+                            returnStr += '<span class="layui-btn layui-btn-small edit" ' +
+                                'onclick="member(' + row.id + ')">成员授权</span>';
+                            return returnStr;
+                        }
+                    },
+                    {
+                        "targets": 5,
+                        "render": function (data, type, row) {
+                            var returnStr = '';
+                            if (row.status ==1){
+                                returnStr += '<span style="border-radius: 2px;background-color: #5FB878;padding:5px 10px;color: #ffffff">'+
+                                        '启用</span>';
+                            }else {
+                                returnStr += '<span style="border-radius: 2px;background-color: #FF5722;padding:5px 10px;color: #ffffff">'+
+                                        '禁用</span>';
+                            }
+                            return returnStr;
+                        }
+                    },
+                    {
+                        "targets":6,
+                        "render":function(data, type, row){
+                            var returnStr = '';
+                            returnStr += '<span class="layui-btn edit layui-btn-normal layui-btn-small" ' +
+                                'onclick="edit('+row.id+')">编辑</span>';
+                            returnStr += '<span class="layui-btn layui-btn-danger layui-btn-small confirm" ' +
+                                'onclick="del('+row.id+')">删除</span>';
+                            return returnStr;
+                        }
+                    }
+                ],
+                iDisplayLength : 10,
+                aLengthMenu : [10, 20, 30],
+                columns: [
+                    {"data": "id"},
+                    {"data": "name"},
+                    {"data": "description" },
+                    {"data": null },
+                    {"data": null },
+                    {"data": null },
+                    {"data": null }
+                ]
+            });
+        };
+        var myTable = myFun();
+    </script>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{%  block main %}
+    <fieldset class="layui-elem-field">
+        <legend>个人信息维护</legend>
+        <div class="layui-field-box">
+            <form class="layui-form" action="">
+                {{ form.csrf_token }}
+                <div class="layui-form-item">
+                    <label class="layui-form-label">账号名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="username" value="{{ current_user.email }}" readonly class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">新密码</label>
+                    <div class="layui-input-block">
+                        {{ form.password(class='layui-input', placeholder='请输入新的密码') }}
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">确认密码</label>
+                    <div class="layui-input-block">
+                        {{ form.password2(class='layui-input', placeholder='请确认密码') }}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="admin-form">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </fieldset>
+{% endblock %}
+
+{% block myScript %}
+    <script>
+        layui.use('form', function(){
+            var form = layui.form();
+
+            //修改密码验证
+            form.verify({
+                password: function (value) {
+                    if (value == ""){
+                        return "请输入新密码";
+                    }
+                },
+                password2: function (value) {
+                    if (value == ""){
+                        return "请输入确认密码";
+                    }
+                }
+            });
+            form.on('submit(admin-form)', function(data){
+                $.ajax({
+                    type: "POST",
+                    url: '{{ url_for("admin.changeuser") }}',
+                    data: data.field,
+                    success: function(msg){
+                        if( msg.code == 1 ){
+                            parent.layer.msg(msg.msg, {
+                                icon: 1,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            }, function () {
+                                parent.location.reload();
+                            });
+                            //parent.location.reload();
+                        }else{
+                            parent.layer.msg('修改失败!', {
+                                icon: 5,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            });
+                        }
+                    }
+                });
+                return false;
+            });
+
+        });
+    </script>
+{% endblock %}

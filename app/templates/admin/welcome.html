@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <fieldset class="layui-elem-field">
+        <legend>欢迎页 - 个人信息</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <label class="layui-form-label">账号名：</label>
+                <div class="layui-input-block" style="border:none">
+                    <input type="text" name="username" value="{{ current_user.email }}" class="layui-input" \
+                           style="border:none">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">真实姓名：</label>
+                <div class="layui-input-block" style="border:none">
+                    <input type="text" name="nickname" value="{{ current_user.username }}" class="layui-input" \
+                           style="border:none">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">登陆时间：</label>
+                <div class="layui-input-block" style="border:none">
+                    <input type="text" name="nickname" required value="{{ current_user.updateTime }}" \
+                           lay-verify="required" class="layui-input" style="border:none">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">登陆IP：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="nickname" required value="{{ current_user.regIp }}" lay-verify="required" \
+                           class="layui-input" style="border:none">
+                </div>
+            </div>
+        </div>
+    </fieldset>
+{% endblock %}
