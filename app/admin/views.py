@@ -210,39 +210,6 @@ def userreset():
 def permission():
 	'''/admin/Permission'''
 	form = DeletepermissionForm()
-	# data = Group.query.order_by(Group.id).all()
-	# if request.method == 'POST':
-	# 	start = int(request.form.to_dict().get('start'))
-	# 	per_page = int(request.form.to_dict().get('length'))
-	# 	draw = request.args.get('draw', 1, type=int)
-	# 	if start == 0:
-	# 		page = 1
-	# 	else:
-	# 		page = int(start / per_page)
-	# 	pagination = Group.query.order_by(Group.id).paginate(page=page, per_page=per_page, error_out=False)
-	# 	info = [{'id': n.id, 'name': n.name, 'description': n.description, \
-	# 			 'status': n.status} for n in pagination.items]
-	# 	data = {
-	# 		'draw': draw,
-	# 		'recordsTotal': pagination.total,
-	# 		'recordsFiltered': pagination.total,
-	# 		'data': info
-	# 	}
-	# 	return jsonify(data)
-	# page = request.args.get('start', 1, type=int)
-	# per_page = request.args.get('length', 10, type=int)
-	# draw = request.args.get('draw', 1, type=int)
-	# pagination = Group.query.order_by(Group.id).paginate(page=page, per_page=per_page, error_out=False)
-	#
-	# info = [{'id': n.id, 'name': n.name, 'description': n.description,  \
-	# 		 'status': n.status} for n in pagination.items]
-	# data = {
-	# 	'draw': draw,
-	# 	'recordsTotal': pagination.total,
-	# 	'recordsFiltered': pagination.total,
-	# 	'data': info
-	# }
-	# print data
 
 	return render_template('admin/permission/index.html', form=form)
 

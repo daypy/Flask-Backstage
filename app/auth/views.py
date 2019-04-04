@@ -18,6 +18,7 @@ from .. import db
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    '''登陆验证'''
     form = LoginForm()
     if form.validate_on_submit():
         challenge = request.form['geetest_challenge']
@@ -54,6 +55,10 @@ def login():
 
 @auth.route('/Verification/gt', methods=['POST','GET'])
 def gt():
+    '''
+    验证码获取
+    :return:
+    '''
     gt_captcha_id = '9d80bd1e6eed71d51a760ade1ee54e51'
     m = hashlib.md5()
     m.update(str(random.randint(0,100)))
@@ -72,6 +77,10 @@ def gt():
 @auth.route('/logout')
 @login_required
 def logout():
+    '''
+    登出
+    :return:
+    '''
     logout_user()
     session.clear
     flash(u'您已退出登陆。', 'success')

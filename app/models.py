@@ -24,6 +24,9 @@ from email.MIMEText import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 class User(UserMixin, db.Model):
+	'''
+	用户表
+	'''
 	__tablename__ = 'admin_user'
 	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(64), unique=True, index=True)
@@ -54,6 +57,9 @@ class User(UserMixin, db.Model):
 
 
 class Menu(db.Model):
+	'''
+	菜单表
+	'''
 	__tablename__ = 'admin_menu'
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(50), nullable=False)
@@ -244,6 +250,9 @@ class Menu(db.Model):
 		return '<Menu %r>' % self.name
 
 class Group(db.Model):
+	'''
+	权限组表
+	'''
 	__tablename__ = 'admin_group'
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(50), nullable=False)
@@ -271,6 +280,9 @@ class Group(db.Model):
 		return '<Group %r>' % self.name
 
 class Group_access(db.Model):
+	'''
+	权限组关联表
+	'''
 	__tablename__ = 'admin_group_access'
 	id = db.Column(db.Integer, primary_key=True)
 	uid = db.Column(db.Integer, unique=True, index=True, nullable=False)
@@ -294,6 +306,9 @@ class Group_access(db.Model):
 			db.session.commit()
 
 class Group_auth(db.Model):
+	'''
+	菜单组关联表
+	'''
 	__tablename__ = 'admin_group_auth'
 	id = db.Column(db.Integer, primary_key=True)
 	mid = db.Column(db.Integer, nullable=False)
@@ -322,11 +337,14 @@ class Group_auth(db.Model):
 			db.session.commit()
 
 class Sendmail:
+	'''
+	邮件发送
+	'''
 	def __init__(self):
-		self.MailHost = "mail.sinashow.com"
-		self.MailUser = "monitor@sinashow.com"
-		self.MailPswd = "monitor"
-		self.MailPostfix = "sinashow.com"
+		self.MailHost = "mail.xxxx.com"
+		self.MailUser = "ops@xxxx.com"
+		self.MailPswd = "ops"
+		self.MailPostfix = "xxx.com"
 
 	def pass_random(self,randomlength=8):
 		passwd = ''

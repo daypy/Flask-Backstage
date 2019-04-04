@@ -12,6 +12,11 @@ from flask import abort, request, session, redirect, url_for
 from flask_login import current_user
 
 def admin_required(func):
+	'''
+	身份验证
+	:param func:
+	:return:
+	'''
 	@wraps(func)
 	def decorated_view(*args, **kwargs):
 		if not int(current_user.id) == 1:
