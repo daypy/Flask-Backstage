@@ -9,7 +9,7 @@ itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
 SQLAlchemy==1.2.4
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 wheel==0.30.0
 flask-login==0.4.1
 flask-moment==0.6.0
