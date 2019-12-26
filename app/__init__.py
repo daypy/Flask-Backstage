@@ -44,10 +44,5 @@ def create_app():
 	from .admin import admin as admin_blueprint
 	app.register_blueprint(admin_blueprint, url_prefix='/admin')
 
-	from .codeupdate import code as code_blueprint
-	app.register_blueprint(code_blueprint, url_prefix='/code')
-
-
-
 
 	return app
