@@ -81,7 +81,6 @@
 
     layui.use(['cms'], function() {
         var cms = layui.cms('left-nav', 'top-tab');
-        //cms.addNav(JSON.parse('{:json_encode(\'{{ list|tojson }}\')}'), 0, 'id', 'fid', 'name', 'url');
         cms.addNav(JSON.parse('{{ list|tojson }}'), 0, 'id', 'fid', 'name', 'url');
         cms.bind(60 + 41 + 20 + 44); //头部高度 + 顶部切换卡标题高度 + 顶部切换卡内容padding + 底部高度
         cms.clickLI(0);
@@ -96,29 +95,6 @@
                 content: '{{ url_for("admin.changeuser") }}'
             });
         });
-        var updateTime = '{$userInfo["updateTime"]}';
-        if( updateTime == 0 ){
-            layer.open({
-                title: '初次登陆请重置密码！',
-                type: 2,
-                area: ['50%', '50%'],
-                maxmin: true,
-                closeBtn:0,
-                content: '{:U("Login/changeUser")}'
-            });
-        }else{
-            var nickname = '{$userInfo["nickname"]}';
-            if( !nickname ){
-                layer.open({
-                    title: '初次登陆请补充真实姓名！',
-                    type: 2,
-                    area: ['80%', '80%'],
-                    maxmin: true,
-                    closeBtn:0,
-                    content: '{:U("Login/changeUser")}'
-                });
-            }
-        }
     });
 </script>
 </body>

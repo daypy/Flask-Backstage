@@ -42,7 +42,7 @@ def index():
 @admin_required
 def welcome():
 	'''/admin/welcome'''
-	current_user.updateTime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(current_user.updateTime))
+	# current_user.updateTime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(current_user.updateTime))
 
 	return  render_template('admin/welcome.html')
 
@@ -105,7 +105,7 @@ def userpage():
 	ginfo = {m.id: m.name for m in gdata}
 	info = [{'id':n.id,'username':n.username,'email':n.email, 'gname':ginfo[gid[n.id]], \
 			 'regTime':time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(n.regTime)), 'regIp':n.regIp, \
-			 'updateTime':time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(n.updateTime))} for n in pagination.items]
+			 'updateTime':n.updateTime} for n in pagination.items]
 	data = {
 		'draw':draw,
 		'recordsTotal': pagination.total,
