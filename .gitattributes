@@ -1,3 +1,4 @@
-*.js linguist-language=Flask
-*.css linguist-language=Flask
-*.html linguist-language=Flask
+*.js linguist-language=js
+*.css linguist-language=css
+*.html linguist-language=html
+*.py linguist-language=Flask
